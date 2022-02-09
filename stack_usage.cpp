@@ -31,7 +31,7 @@ int main()
 
 	// Remove method
 	cout << "\nRemove Method" << endl;
-	stk.remove(2);
+	stk.remove(2);		// 2 is the index, item in index 2 will be removed
 	stk.printStack();	// 1 21 5 23
 
 	// print the array passed
