@@ -1,5 +1,5 @@
 /*
- * Library Name : cutils.hpp
+ * Library Name : utils.hpp
  * Programmer   : DHANUSH H V
  */
 
