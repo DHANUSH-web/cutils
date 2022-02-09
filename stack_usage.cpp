@@ -34,8 +34,8 @@ int main()
 	stk.remove(2);		// 2 is the index, item in index 2 will be removed
 	stk.printStack();	// 1 21 5 23
 
-	// print the array passed
-	cout << "\nPassed Array: ";
+	// print the updated array
+	cout << "\nUpdated Array: ";
 
 	for (int i = 0; i < stk.arr.size(); i++)
 		cout << stk.arr[i] << " ";
