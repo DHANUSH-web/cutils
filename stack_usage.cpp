@@ -1,6 +1,6 @@
-// Stack Usage in CUTILS
+// Stack Usage in UTILS
 
-#include "src/cutils.hpp"
+#include "utils.hpp"		// path of utils.hpp
 
 int main()
 {
