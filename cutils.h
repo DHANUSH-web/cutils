@@ -1,628 +1,400 @@
-/*
- * Library Name : cutils.hpp
- * Programmer   : DHANUSH H V
- * Passion		: Utilities and Stacks
- */
+#ifndef CUTILS_H
+#define CUTILS_H
 
-#include <bits/stdc++.h>
-#include <unistd.h>
-using namespace std;
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <iostream>
+#include <sstream>
+#include <cstring>
+#include <climits>
+#include <stdexcept>
+#include <cstdlib>
 
-#define __CEL_TO_FAR__(x) x * 1.8f + 32.f
-#define __FAR_TO_CEL__(f) (f - 32.f) / 1.8f
+#define __CEL_TO_FAR__(x) ((x) * 1.8f + 32.f)
+#define __FAR_TO_CEL__(f) (((f) - 32.f) / 1.8f)
 
-template <class T>
+namespace cutils {
 
-class __CUTILS__
-{
-public:
-    // function to check that an item is present int the array
-    bool contains(const T str[], const T c)
-    {
-        for (int i = 0; i < strlen(str); i++)
-        {
-            if (str[i] == c)
+    template <typename T>
+    bool contains(const T* arr, size_t size, const T& value) {
+        for (size_t i = 0; i < size; ++i) {
+            if (arr[i] == value)
                 return true;
         }
-
         return false;
     }
 
-    // function to count an item appeared in the vector and arrays
-    int count(const vector<T> arr, const int n)
-    {
-        int cnt = 0;
+    template <typename T>
+    bool contains(const std::vector<T>& vec, const T& value) {
+        return std::find(vec.begin(), vec.end(), value) != vec.end();
+    }
 
-        for (int i = 0; i < arr.size(); i++)
-        {
-            if (arr[i] == n)
+    template <typename T>
+    int count(const std::vector<T>& vec, const T& value) {
+        return static_cast<int>(std::count(vec.begin(), vec.end(), value));
+    }
+
+    template <typename T>
+    int count(const T arr[], const T& value, int arr_size) {
+        int cnt = 0;
+        for (int i = 0; i < arr_size; i++) {
+            if (arr[i] == value)
                 cnt++;
         }
-
         return cnt;
     }
 
-    int count(const T arr[], const T n, const int arr_size)
-    {
-        int cnt = 0;
-
-        for (int i = 0; i < arr_size; i++)
-        {
-            if (arr[i] == n)
-                cnt++;
+    template <typename T>
+    std::vector<T> sort(std::vector<T> arr, char mode = 'a') {
+        if (mode == 'a') {
+            std::sort(arr.begin(), arr.end());
+        } else {
+            std::sort(arr.begin(), arr.end(), std::greater<T>());
         }
-
-        return cnt;
-    }
-
-    // bubble sort algorithm to sort a vector array
-    vector<T> sort(vector<T> arr, const char mode = 'a')
-    {
-        size_t sz = arr.size(); // find the length of the array
-
-        for (int i = 0; i < sz - 1; i++)
-        {
-            for (int j = 0; j < sz - 1 - i; j++)
-            {
-                bool condition = (mode == 'a') ? (arr[j] > arr[j + 1]) : (arr[j] < arr[j + 1]);
-
-                if (condition)
-                {
-                    swap(arr[j], arr[j + 1]);
-                }
-            }
-        }
-
         return arr;
     }
 
-    T *sort(T arr[], const T size, const char mode = 'a')
-    {
-        for (int i = 0; i < size; i++)
-        {
-            for (int j = 0; j < size - 1 - i; j++)
-            {
-                bool condition = (mode == 'a') ? (arr[j] > arr[j + 1]) : (arr[j] < arr[j + 1]);
-
-                if (condition)
-                {
-                    swap(arr[j], arr[j + 1]);
-                }
-            }
+    template <typename T>
+    T* sort(T arr[], size_t size, char mode = 'a') {
+        if (mode == 'a') {
+            std::sort(arr, arr + size);
+        } else {
+            std::sort(arr, arr + size, std::greater<T>());
         }
-
         return arr;
     }
 
-    // sorting the orignal array
-    void sort_orgarr(vector<T> &arr, const char mode = 'a')
-    {
-        size_t sz = arr.size();
-
-        for (int i = 0; i < sz; i++)
-        {
-            for (int j = 0; j < sz - 1 - j; j++)
-            {
-                bool condition = (mode == 'a') ? (arr[j] > arr[j + 1]) : (arr[j] < arr[j + 1]);
-
-                if (condition)
-                {
-                    swap(arr[j], arr[j + 1]);
-                }
-            }
+    template <typename T>
+    void sort_orgarr(std::vector<T>& arr, char mode = 'a') {
+        if (mode == 'a') {
+            std::sort(arr.begin(), arr.end());
+        } else {
+            std::sort(arr.begin(), arr.end(), std::greater<T>());
         }
     }
 
-    // function to convert vector datatype to normal array
-    T *toArray(const vector<T> nums)
-    {
-        int *arr = new int[nums.size() + 1];
-
-        for (int i = 0; i < nums.size(); i++)
-        {
-            arr[i] = nums[i];
-        }
-
-        return arr;
+    template <typename T>
+    std::vector<T> toArray(const std::vector<T>& nums) {
+        return nums;
     }
 
-    // Floyd's tortoise and hare cycle detection algorithm to find a duplicate item from a vector array
-    T find_duplicate(const vector<T> nums)
-    {
+    template <typename T>
+    T find_duplicate(const std::vector<T>& nums) {
+        if (nums.empty()) return T();
         T fast = nums[0], slow = nums[0];
-
-        while (true)
-        {
-            fast = nums[nums[fast]];
+        do {
             slow = nums[slow];
-
-            if (slow == fast)
-                break;
-        }
-
+            fast = nums[nums[fast]];
+        } while (slow != fast);
         fast = nums[0];
-
-        while (fast != slow)
-        {
+        while (fast != slow) {
             slow = nums[slow];
             fast = nums[fast];
         }
-
         return slow;
     }
 
-    T find_duplicate(const T nums[], const int arr_size)
-    {
+    template <typename T>
+    T find_duplicate(const T nums[], size_t size) {
+        if (size == 0) return T();
         T fast = nums[0], slow = nums[0];
-
-        while (true)
-        {
+        do {
             slow = nums[slow];
             fast = nums[nums[fast]];
-
-            if (slow == fast)
-                break;
-        }
-
+        } while (slow != fast);
         fast = nums[0];
-
-        while (fast != slow)
-        {
+        while (fast != slow) {
             fast = nums[fast];
             slow = nums[slow];
         }
-
         return slow;
     }
 
-    // function to split a vector array to a given index from the original vector array
-    vector<T> split_arr(const vector<T> arr, const int begin, const int end)
-    {
-        vector<T> new_arr;
-
-        for (int i = begin; i < end; i++)
-        {
-            new_arr.push_back(arr[i]);
+    template <typename T>
+    std::vector<T> split_arr(const std::vector<T>& arr, int begin, int end) {
+        if (begin < 0 || end > static_cast<int>(arr.size()) || begin > end) {
+            return std::vector<T>();
         }
-
-        return new_arr;
+        return std::vector<T>(arr.begin() + begin, arr.begin() + end);
     }
 
-    vector<int> strToArray(const string str)
-    {
-        stringstream ss(str);
-        vector<int> nums;
+    inline std::vector<int> strToArray(const std::string& str) {
+        std::stringstream ss(str);
+        std::vector<int> nums;
         int num;
         char ch;
-
-        while (ss >> num)
-        {
+        while (ss >> num) {
             nums.push_back(num);
             ss >> ch;
         }
-
         return nums;
     }
 
-    vector<T> merge_sort(vector<T> arr, const char mode = 'a')
-    {
-        int sz = arr.size(), mid, i = 0, j = 0, k = 0;
-        vector<T> L, R;
-
-        if (sz > 1)
-        {
-            mid = sz / 2;
-
-            L = split_arr(arr, 0, mid);
-            R = split_arr(arr, mid, sz);
-
-            L = merge_sort(L);
-            R = merge_sort(R);
-
-            while (i < L.size() && j < R.size())
-            {
-                bool condition = (mode == 'a') ? (L[i] < R[j]) : (L[i] > R[j]);
-
-                if (condition)
-                {
-                    arr[k] = L[i];
-                    i++;
-                }
-                else
-                {
-                    arr[k] = R[j];
-                    j++;
-                }
-
-                k++;
-            }
-
-            while (i < L.size())
-            {
-                arr[k] = L[i];
-                i++;
-                k++;
-            }
-
-            while (j < R.size())
-            {
-                arr[k] = R[j];
-                j++;
-                k++;
-            }
-        }
-
-        return arr;
+    template <typename T>
+    std::vector<T> merge_sort(std::vector<T> arr, char mode = 'a') {
+        return sort(arr, mode);
     }
 
-    void printArray(const vector<T> arr, const char _end = '\n')
-    {
-        for (int i = 0; i < arr.size(); i++)
-        {
-            cout << arr[i] << _end;
+    template <typename T>
+    void printArray(const std::vector<T>& arr, char _end = '\n') {
+        for (const auto& item : arr) {
+            std::cout << item << _end;
         }
     }
 
-    void printArray(const T arr[], const int arr_size, const char _end = '\n')
-    {
-        for (int i = 0; i < arr_size; i++)
-        {
-            cout << arr[i] << _end;
+    template <typename T>
+    void printArray(const T arr[], int arr_size, char _end = '\n') {
+        for (int i = 0; i < arr_size; i++) {
+            std::cout << arr[i] << _end;
         }
     }
 
-    T sum(const vector<T> arr)
-    {
+    template <typename T>
+    T sum(const std::vector<T>& arr) {
         T s = 0;
-
-        for (int i = 0; i < arr.size(); i++)
-        {
-            s += arr[i];
+        for (const auto& item : arr) {
+            s += item;
         }
-
         return s;
     }
 
-    T sum(const T arr[], const int arr_size)
-    {
+    template <typename T>
+    T sum(const T arr[], int arr_size) {
         T s = 0;
-
-        for (int i = 0; i < arr_size; i++)
-        {
+        for (int i = 0; i < arr_size; i++) {
             s += arr[i];
         }
-
         return s;
     }
 
-    // function returns the largest number in the array
-    T max(const T arr[], const int arr_size)
-    {
+    template <typename T>
+    T max(const T arr[], int arr_size) {
+        if (arr_size <= 0) return T();
         T n = arr[0];
-
-        for (int i = 0; i < arr_size; i++)
-        {
-            if (n < arr[i])
-                n = arr[i];
+        for (int i = 1; i < arr_size; i++) {
+            if (n < arr[i]) n = arr[i];
         }
-
         return n;
     }
 
-    T max(const vector<T> arr)
-    {
-        T n = arr[0], sz = arr.size();
-
-        for (int i = 0; i < sz; i++)
-        {
-            if (n < arr[i])
-                n = arr[i];
-        }
-
-        return n;
+    template <typename T>
+    T max(const std::vector<T>& arr) {
+        if (arr.empty()) return T();
+        return *std::max_element(arr.begin(), arr.end());
     }
 
-    // function returns the smallest number in the array
-    T min(const T arr[], const int arr_size)
-    {
+    template <typename T>
+    T min(const T arr[], int arr_size) {
+        if (arr_size <= 0) return T();
         T n = arr[0];
-
-        for (int i = 0; i < arr_size; i++)
-        {
-            if (n > arr[i])
-                n = arr[i];
+        for (int i = 1; i < arr_size; i++) {
+            if (n > arr[i]) n = arr[i];
         }
-
         return n;
     }
 
-    T min(const vector<T> arr)
-    {
-        T n = arr[0], sz = arr.size();
-
-        for (int i = 0; i < sz; i++)
-        {
-            if (n > arr[i])
-                n = arr[i];
-        }
-
-        return n;
+    template <typename T>
+    T min(const std::vector<T>& arr) {
+        if (arr.empty()) return T();
+        return *std::min_element(arr.begin(), arr.end());
     }
 
-    T power(const T base, const int pow)
-    {
-        T p = 1;
-
-        for (int i = 0; i < pow; i++)
-        {
-            p *= base;
+    template <typename T>
+    T power(T base, int exp) {
+        T res = 1;
+        while (exp > 0) {
+            if (exp % 2 == 1) res *= base;
+            base *= base;
+            exp /= 2;
         }
-
-        return p;
+        return res;
     }
 
-    int indexOf(const T arr[], const T e, const int arr_size)
-    {
-        for (int i = 0; i < arr_size; i++)
-        {
-            if (arr[i] == e)
-                return i;
+    template <typename T>
+    int indexOf(const T arr[], const T& e, int arr_size) {
+        for (int i = 0; i < arr_size; i++) {
+            if (arr[i] == e) return i;
         }
-
         return -1;
     }
 
-    T indexOf(const vector<T> arr, const T e)
-    {
-        for (int i = 0; i < arr.size(); i++)
-        {
-            if (arr[i] == e)
-                return i;
+    template <typename T>
+    int indexOf(const std::vector<T>& arr, const T& e) {
+        for (size_t i = 0; i < arr.size(); i++) {
+            if (arr[i] == e) return static_cast<int>(i);
         }
-
         return -1;
     }
 
-    // int indexOf(const char str[], const char c)
-    // {
-    //     for (int i = 0; i < strlen(str); i++)
-    //     {
-    //         if (str[i] == c)
-    //             return i;
-    //     }
-
-    //     return -1;
-    // }
-
-    char *reverse_str(char *str)
-    {
-        int size = strlen(str);
-
-        for (int i = 0; i < int(size / 2); i++)
-        {
-            swap(str[i], str[size - i - 1]);
-        }
-
+    inline char* reverse_str(char* str) {
+        if (!str) return nullptr;
+        size_t size = strlen(str);
+        std::reverse(str, str + size);
         return str;
     }
 
-    string reverse_str(string str)
-    {
-        int sz = str.size();
-
-        for (int i = 0; i < int(sz / 2); i++)
-        {
-            swap(str[i], str[sz - i - 1]);
-        }
-
+    inline std::string reverse_str(std::string str) {
+        std::reverse(str.begin(), str.end());
         return str;
     }
 
-    int reverse_num(int num)
-    {
-        int rev_bit = 0;
-
-        do {
-            int last_bit = num % 10;
-            rev_bit = rev_bit * 10 + last_bit;
+    inline int reverse_num(int num) {
+        int rev = 0;
+        bool negative = num < 0;
+        if (negative) num = -num;
+        while (num > 0) {
+            rev = rev * 10 + (num % 10);
             num /= 10;
-        } while (num != 0);
-
-        return rev_bit;
+        }
+        return negative ? -rev : rev;
     }
 
-    vector<T> reverse_arr(vector<T> nums, const bool sorted = false, const char mode = 'a')
-    {
-        if (sorted)
-            nums = sort(nums, (mode == 'a') ? 'd' : 'a');
-
-        for (int i = 0, j = nums.size() - 1; i < j; i++, --j)
-        {
-            swap(nums[i], nums[j]);
-        }
-
+    template <typename T>
+    std::vector<T> reverse_arr(std::vector<T> nums, bool sorted = false, char mode = 'a') {
+        if (sorted) sort_orgarr(nums, (mode == 'a') ? 'd' : 'a');
+        std::reverse(nums.begin(), nums.end());
         return nums;
     }
 
-    T *reverse_arr(T nums[], const int size, const bool sorted = false, const char mode = 'a')
-    {
-        if (sorted)
-            nums = sort(nums, (mode == 'a') ? 'd' : 'a');
-
-        for (int i = 0, j = size - 1; i < j; i++, --j)
-        {
-            swap(nums[i], nums[j]);
-        }
-
+    template <typename T>
+    T* reverse_arr(T nums[], size_t size, bool sorted = false, char mode = 'a') {
+        if (sorted) sort(nums, size, (mode == 'a') ? 'd' : 'a');
+        std::reverse(nums, nums + size);
         return nums;
     }
 
-    void reverse_orgarr(vector<T> &nums, const bool sorted = false, const char mode = 'a')
-    {
-        if (sorted)
-            nums = sort(nums, (mode == 'a') ? 'd' : 'a');
-
-        for (int i = 0, j = nums.size() - 1; i < j; i++, --j)
-        {
-            swap(nums[i], nums[j]);
-        }
+    template <typename T>
+    void reverse_orgarr(std::vector<T>& nums, bool sorted = false, char mode = 'a') {
+        if (sorted) sort_orgarr(nums, (mode == 'a') ? 'd' : 'a');
+        std::reverse(nums.begin(), nums.end());
     }
 
-    int to_decimal(const char binary[])
-    {
-        int dec = 0, sz = strlen(binary);
-        int index = sz - 1;
-
-        for (int i = 0; i < sz; i++)
-        {
-            if (binary[i] == '1')
-            {
-                dec += power(2, index);
-            }
-
-            index--;
+    inline int to_decimal(const char binary[]) {
+        if (!binary) return 0;
+        int dec = 0;
+        for (int i = 0; binary[i] != '\0'; ++i) {
+            dec = (dec << 1) | (binary[i] == '1' ? 1 : 0);
         }
-
         return dec;
     }
 
-    int to_decimal(const vector<char> binary)
-    {
-        int dec = 0, sz = binary.size();
-        int index = sz - 1;
-
-        for (int i = 0; i < sz; ++i)
-        {
-            if (binary[i] == '1')
-                dec += power(2, index);
-
-            index--;
+    inline int to_decimal(const std::vector<char>& binary) {
+        int dec = 0;
+        for (char c : binary) {
+            dec = (dec << 1) | (c == '1' ? 1 : 0);
         }
-
         return dec;
     }
 
-    int to_decimal(const string binary)
-    {
-        int dec = 0, sz = binary.length();
-        int index = sz - 1;
-
-        for (int i = 0; i < sz; i++)
-        {
-            if (binary[i] == '1')
-                dec += power(2, index);
-
-            index--;
+    inline int to_decimal(const std::string& binary) {
+        int dec = 0;
+        for (char c : binary) {
+            dec = (dec << 1) | (c == '1' ? 1 : 0);
         }
-
         return dec;
     }
 
-    char *to_binary(int dec)
-    {
-        char *bin = new char[dec];
-        int i = 0;
-
-        while (dec > 0)
-        {
-            bin[i] = (dec % 2 == 1) ? '1' : '0';
+    inline std::string to_binary(int dec) {
+        if (dec == 0) return "0";
+        std::string bin = "";
+        while (dec > 0) {
+            bin += (dec % 2 == 1) ? '1' : '0';
             dec /= 2;
-            i++;
         }
-
-        return reverse_str(bin);
+        std::reverse(bin.begin(), bin.end());
+        return bin;
     }
-};
 
-// Implementing Stack Operation for FIFO technology
-template <class U>
-
-class Stack
-{
+    template <typename U>
+    class Stack {
     private:
-        int top;
-        unsigned max;
-        U* arr;
+        std::vector<U> arr;
+        size_t max_size;
 
     public:
+        Stack(size_t max = 200000) : max_size(max) {}
 
-        // Stack constructor
-        Stack (unsigned max=2e5)
-        {
-            this->max = max;
-            top = -1;
-            arr = (U*)malloc(this->max * sizeof(U));
+        Stack(const std::vector<U>& initial_arr) : arr(initial_arr), max_size(200000) {}
+
+        bool isFull() const {
+            return arr.size() >= max_size;
         }
 
-        // method to see the stack is full
-        const bool isFull()
-        {
-            return top == this->max - 1;
+        bool isEmpty() const {
+            return arr.empty();
         }
 
-        // method to see the stack is empty
-        const bool isEmpty()
-        {
-            return top == -1;
+        size_t length() const {
+            return arr.size();
         }
 
-        // method to return the length of the stack
-        const int length()
-        {
-            return top + 1;
-        }
-
-        // method to push new item to the stack
-        const void push(const U item)
-        {
-            if (isFull())
-                cout << "Stack Overflow" << endl;
-
-            else
-                arr[++top] = item;
-        }
-
-        // method to remove / pop the item from the stack
-        const U pop()
-        {
-            if (isEmpty())
-                return INT_MIN;
-
-            else
-                return arr[top--];
-        }
-
-        // method to return the peek item in the stack
-        const U peek()
-        {
-            return arr[top];
-        }
-
-        // method to print stacks
-        const void printStack()
-        {
-            if (isEmpty())
-                cout << "Stack is Empty" << endl;
-            
-            else
-                for (int i = length()-1; i >= 0; i--)
-                    cout << arr[i] << endl;
-        }
-
-        // method to show the interactive stack
-        const void showStack()
-        {
-            if (isEmpty())
-                cout << "Stack is Empty" << endl;
-
-            else
-            {
-                for (int i = length()-1; i >= 0; i--)
-                    cout << arr[i] << "\t--> |===========| --> Memory Address: " << &arr[i] << endl;
-
-                cout << "\nTotal Stack Items : " << length() << endl;
-                cout << "Stack Item Size   : " << sizeof(U) << " Bits" << endl;
-                cout << "Stack Total Size  : " << (length() * sizeof(U)) << " Bits" << endl;
+        void push(const U& item) {
+            if (isFull()) {
+                std::cout << "Stack Overflow" << std::endl;
+            } else {
+                arr.push_back(item);
             }
         }
-};
+
+        U pop() {
+            if (isEmpty()) {
+                throw std::underflow_error("Stack is Empty");
+            } else {
+                U item = arr.back();
+                arr.pop_back();
+                return item;
+            }
+        }
+
+        U peek() const {
+            if (isEmpty()) {
+                throw std::underflow_error("Stack is Empty");
+            }
+            return arr.back();
+        }
+
+        void printStack() const {
+            if (isEmpty()) {
+                std::cout << "Stack is Empty" << std::endl;
+            } else {
+                for (int i = static_cast<int>(arr.size()) - 1; i >= 0; i--) {
+                    std::cout << arr[i] << std::endl;
+                }
+            }
+        }
+
+        void showStack() const {
+            if (isEmpty()) {
+                std::cout << "Stack is Empty" << std::endl;
+            } else {
+                for (int i = static_cast<int>(arr.size()) - 1; i >= 0; i--) {
+                    std::cout << arr[i] << "\t--> |===========| --> Memory Address: " << &arr[i] << std::endl;
+                }
+                std::cout << "\nTotal Stack Items : " << length() << std::endl;
+                std::cout << "Stack Item Size   : " << sizeof(U) << " Bytes" << std::endl;
+                std::cout << "Stack Total Size  : " << (length() * sizeof(U)) << " Bytes" << std::endl;
+            }
+        }
+
+        void insert(size_t index, const U& value) {
+            if (index > arr.size()) {
+                throw std::out_of_range("Index out of range");
+            }
+            arr.insert(arr.begin() + index, value);
+        }
+
+        void remove(size_t index) {
+            if (index >= arr.size()) {
+                throw std::out_of_range("Index out of range");
+            }
+            arr.erase(arr.begin() + index);
+        }
+
+        const std::vector<U>& getInternalVector() const {
+            return arr;
+        }
+    };
+}
+
+#endif

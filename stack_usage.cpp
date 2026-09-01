@@ -1,6 +1,11 @@
 // Stack Usage in CUTILS
 
-#include "cutils.hpp"
+#include "cutils.h"
+#include <vector>
+#include <iostream>
+
+using namespace std;
+using namespace cutils;
 
 int main()
 {
@@ -37,8 +42,9 @@ int main()
 	// print the updated array
 	cout << "\nUpdated Array: ";
 
-	for (int i = 0; i < stk.arr.size(); i++)
-		cout << stk.arr[i] << " ";
+	const auto& internal_arr = stk.getInternalVector();
+	for (int i = 0; i < internal_arr.size(); i++)
+		cout << internal_arr[i] << " ";
 
 	cout << endl;
 	return 0;
